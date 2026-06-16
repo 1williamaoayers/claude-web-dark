@@ -32,27 +32,13 @@ jobs:
       - name: Package release
         run: |
           mkdir -p dist/claude-web
-          # 前端编译产物 -> public/
           cp -r packages/web/dist dist/claude-web/public
-          # 后端编译产物 -> server/
           cp -r packages/server/dist dist/claude-web/server
-          # 打包 node_modules（剔除 devDeps 节省体积）
           cd packages/server
           npm prune --omit=dev
           cd ../..
           cp -r packages/server/node_modules dist/claude-web/server/node_modules
-          # 根目录入口脚本
-          cat > dist/claude-web/start.sh << 'EOF'
-#!/usr/bin/env bash
-set -e
-DIR="$(cd "$(dirname "$0")" && pwd)"
-PORT="${PORT:-8004}"
-HOST="${HOST:-0.0.0.0}"
-echo "Starting Claude Web on http://$HOST:$PORT"
-exec node "$DIR/server/cli.js" start --port "$PORT" --hostname "$HOST"
-EOF
-          chmod +x dist/claude-web/start.sh
-          # 打包
+          cp start.sh dist/claude-web/
           cd dist
           tar czf claude-web-dark.tar.gz claude-web/
 
