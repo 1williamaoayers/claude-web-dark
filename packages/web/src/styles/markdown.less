@@ -24,7 +24,7 @@
   li { margin: 2px 0; }
 
   code {
-    background: rgba(0, 0, 0, 0.06);
+    background: var(--c-code-bg);
     border-radius: 3px;
     padding: 1px 5px;
     font-size: 12px;
@@ -32,7 +32,7 @@
   }
 
   pre {
-    background: rgba(0, 0, 0, 0.06);
+    background: var(--c-code-bg);
     border-radius: 6px;
     padding: 10px 12px;
     overflow-x: auto;
@@ -51,30 +51,30 @@
     font-size: 13px;
   }
   th, td {
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--c-border);
     padding: 5px 10px;
     text-align: left;
   }
   th {
-    background: rgba(0, 0, 0, 0.04);
+    background: rgba(128,128,128,0.08);
     font-weight: 600;
   }
 
   blockquote {
     margin: 6px 0;
     padding: 4px 12px;
-    border-left: 3px solid #d0d0d0;
-    color: #666;
+    border-left: 3px solid var(--c-border);
+    color: var(--c-text1);
   }
 
   hr {
     border: none;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid var(--c-border);
     margin: 10px 0;
   }
 
   a {
-    color: #1677ff;
+    color: var(--c-primary);
     text-decoration: none;
     &:hover { text-decoration: underline; }
   }

@@ -1,0 +1,51 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build web
+        working-directory: packages/web
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build server
+        working-directory: packages/server
+        run: |
+          npm ci
+          npm run build
+
+      - name: Create release archive
+        run: |
+          mkdir -p dist/claude-web
+          cp -r packages/web/dist dist/claude-web/web-ui
+          cp -r packages/server/dist dist/claude-web/server
+          cp packages/server/package.json dist/claude-web/
+          cd dist
+          tar czf claude-web-dark.tar.gz claude-web/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: claude-web-dark
+          path: dist/claude-web-dark.tar.gz
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main'
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Release v${{ github.run_number }}
+          files: dist/claude-web-dark.tar.gz
+          generate_release_notes: true

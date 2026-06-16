@@ -9,11 +9,14 @@ import {
   LoadingOutlined,
   HomeOutlined,
   CheckCircleFilled,
+  SunOutlined,
+  MoonOutlined,
 } from '@ant-design/icons'
 import { api, type ProjectInfo } from '@/http/index'
 import TerminalPanel from '@/components/Terminal/index.tsx'
 import FullSpin from '@/components/FullSpin'
 import { useIsMobile } from '@/hooks/useIsMobile'
+import { useTheme } from '@/context/ThemeContext'
 import './index.less'
 
 function timeAgo(ts: number): string {
@@ -34,7 +37,7 @@ function ProjectCard({ project, onClick }: { project: ProjectInfo; onClick: () =
     <div className="projectCard" onClick={onClick}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <div className="projectCard-icon">
-          <FolderOpenOutlined style={{ color: '#1677ff', fontSize: 16 }} />
+          <FolderOpenOutlined style={{ color: 'var(--c-primary)', fontSize: 16 }} />
         </div>
         <div style={{ overflow: 'hidden', paddingRight: 8 }}>
           <div className="projectCard-name">{name}</div>
@@ -57,11 +60,11 @@ function ProjectCard({ project, onClick }: { project: ProjectInfo; onClick: () =
   )
 }
 
-// ── 目录浏览器 ─────────────────────────────────────────────────────────────
 function DirPicker({ selected, onSelect }: { selected: string; onSelect: (path: string) => void }) {
   const [currentPath, setCurrentPath] = useState('')
   const [dirs, setDirs] = useState<{ name: string; path: string }[]>([])
   const [loadingPath, setLoadingPath] = useState<string | null>(null)
+  const css = (v: string) => `var(${v})`
 
   async function navigate(path?: string) {
     const target = path ?? ''
@@ -75,313 +78,167 @@ function DirPicker({ selected, onSelect }: { selected: string; onSelect: (path: 
     }
   }
 
-  useEffect(() => {
-    navigate()
-  }, [])
+  useEffect(() => { navigate() }, [])
 
-  // 面包屑：把路径拆成可点击的段
   const segments = currentPath ? currentPath.split('/').filter(Boolean) : []
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      {/* 已选路径提示 */}
       {selected && (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '6px 10px',
-            background: '#f0f9ff',
-            border: '1px solid #bae0ff',
-            borderRadius: 6,
-            fontSize: 12,
-            color: '#0958d9',
-          }}
-        >
-          <CheckCircleFilled style={{ color: '#1677ff' }} />
-          <span
-            style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-          >
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 6, padding: '6px 10px',
+          background: css('--c-primary-bg'), border: `1px solid ${css('--c-primary-border')}`,
+          borderRadius: 6, fontSize: 12, color: css('--c-primary-text'),
+        }}>
+          <CheckCircleFilled style={{ color: css('--c-primary') }} />
+          <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {selected}
           </span>
         </div>
       )}
 
-      {/* 面包屑导航 */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: 2,
-          padding: '4px 8px',
-          background: '#fafafa',
-          border: '1px solid #e8e8e8',
-          borderRadius: 6,
-          fontSize: 12,
-          minHeight: 32,
-        }}
-      >
+      <div style={{
+        display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 2,
+        padding: '4px 8px', background: css('--c-bg2'), border: `1px solid ${css('--c-border')}`,
+        borderRadius: 6, fontSize: 12,
+      }}>
         <span
-          style={{ cursor: 'pointer', color: '#1677ff', padding: '0 2px' }}
           onClick={() => navigate()}
+          style={{ cursor: 'pointer', padding: '2px 4px', borderRadius: 4, color: css('--c-text1') }}
+          onMouseEnter={e => (e.currentTarget.style.background = css('--c-bg-hover'))}
+          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
         >
-          <HomeOutlined />
+          <HomeOutlined style={{ fontSize: 12 }} /> /
         </span>
-        {segments.map((seg, i) => {
-          const segPath = '/' + segments.slice(0, i + 1).join('/')
-          return (
-            <span key={segPath} style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <RightOutlined style={{ fontSize: 9, color: '#bbb' }} />
-              <span
-                style={{
-                  cursor: 'pointer',
-                  color: i === segments.length - 1 ? '#333' : '#1677ff',
-                  padding: '0 2px',
-                  fontWeight: i === segments.length - 1 ? 600 : undefined,
-                }}
-                onClick={() => i < segments.length - 1 && navigate(segPath)}
-              >
-                {seg}
-              </span>
+        {segments.map((seg, i) => (
+          <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <RightOutlined style={{ fontSize: 10, color: css('--c-text2') }} />
+            <span
+              onClick={() => navigate('/' + segments.slice(0, i + 1).join('/'))}
+              style={{
+                cursor: 'pointer', padding: '2px 4px', borderRadius: 4, color: css('--c-text1'),
+                fontWeight: i === segments.length - 1 ? 600 : 400,
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = css('--c-bg-hover'))}
+              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            >
+              {seg.length > 14 ? seg.slice(0, 12) + '…' : seg}
             </span>
-          )
-        })}
+          </span>
+        ))}
       </div>
 
-      {/* 目录列表 */}
-      <div
-        style={{
-          border: '1px solid #e8e8e8',
-          borderRadius: 6,
-          overflow: 'auto',
-          maxHeight: 280,
-          background: '#fff',
-        }}
-      >
-        {loadingPath !== null ? (
-          <div style={{ display: 'flex', justifyContent: 'center', padding: 24 }}>
-            <LoadingOutlined style={{ color: '#1677ff', fontSize: 20 }} />
-          </div>
-        ) : dirs.length === 0 ? (
-          <div style={{ padding: '20px 0', textAlign: 'center', color: '#bbb', fontSize: 12 }}>
-            没有子目录
-          </div>
-        ) : (
-          dirs.map((dir) => {
-            const isSelected = selected === dir.path
-            return (
-              <div
-                key={dir.path}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '7px 12px',
-                  cursor: 'pointer',
-                  background: isSelected ? '#e6f4ff' : undefined,
-                  borderBottom: '1px solid #f5f5f5',
-                  transition: 'background 0.1s',
-                }}
-                onClick={() => onSelect(dir.path)}
-                onDoubleClick={() => navigate(dir.path)}
-              >
-                <FolderOpenOutlined
-                  style={{
-                    color: isSelected ? '#1677ff' : '#faad14',
-                    marginRight: 8,
-                    fontSize: 14,
-                  }}
-                />
-                <span
-                  style={{
-                    flex: 1,
-                    fontSize: 13,
-                    color: isSelected ? '#1677ff' : '#333',
-                    fontWeight: isSelected ? 600 : undefined,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {dir.name}
-                </span>
-                <RightOutlined
-                  style={{ color: '#ccc', fontSize: 11 }}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    navigate(dir.path)
-                  }}
-                />
-              </div>
-            )
-          })
-        )}
-      </div>
+      {dirs.length === 0 && <div style={{ textAlign: 'center', color: css('--c-text2'), padding: '8px 0', fontSize: 12 }}>暂无子目录</div>}
 
-      <div style={{ fontSize: 11, color: '#aaa' }}>
-        单击选中目录，双击或点击 <RightOutlined style={{ fontSize: 9 }} /> 进入子目录
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 2, maxHeight: 300, overflowY: 'auto' }}>
+        {dirs.map((dir) => (
+          <div
+            key={dir.path}
+            onClick={() => onSelect(dir.path)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px',
+              borderRadius: 6, cursor: 'pointer', fontSize: 12,
+              background: selected === dir.path ? css('--c-bg-selected') : 'transparent',
+            }}
+            onMouseEnter={e => { if (selected !== dir.path) e.currentTarget.style.background = css('--c-bg-hover') }}
+            onMouseLeave={e => { if (selected !== dir.path) e.currentTarget.style.background = 'transparent' }}
+          >
+            <FolderOpenOutlined style={{ color: css('--c-primary'), fontSize: 14 }} />
+            <span style={{ color: css('--c-text0') }}>{dir.name}</span>
+          </div>
+        ))}
       </div>
     </div>
   )
 }
 
-// ── 主页 ────────────────────────────────────────────────────────────────────
 export default function HomePage() {
   const navigate = useNavigate()
   const isMobile = useIsMobile()
+  const { theme, toggle } = useTheme()
+  const css = (v: string) => `var(${v})`
   const [projects, setProjects] = useState<ProjectInfo[]>([])
   const [loading, setLoading] = useState(true)
-  const [modalOpen, setModalOpen] = useState(false)
-  const [selectedCwd, setSelectedCwd] = useState('')
-  const [linking, setLinking] = useState(false)
   const [search, setSearch] = useState('')
-  const { message } = AntdApp.useApp()
+  const [showModal, setShowModal] = useState(false)
 
-  async function load(showLoading = false) {
-    if (showLoading) setLoading(true)
+  async function loadProjects() {
+    setLoading(true)
     try {
-      setProjects([...((await api.listProjects()) || [])])
+      const list = await api.listProjects()
+      setProjects(list)
     } finally {
-      if (showLoading) setLoading(false)
+      setLoading(false)
     }
   }
 
-  useEffect(() => {
-    load(true)
-  }, [])
-
-  function openModal() {
-    setSelectedCwd('')
-    setModalOpen(true)
-  }
-
-  async function handleLink() {
-    if (!selectedCwd) return
-    setLinking(true)
-    try {
-      const res = await api.linkProject(selectedCwd)
-      if ('error' in res) {
-        message.error(res.error)
-        return
-      }
-      message.success('项目已添加')
-      setModalOpen(false)
-      await load()
-    } finally {
-      setLinking(false)
-    }
-  }
+  useEffect(() => { loadProjects() }, [])
 
   return (
     <div className="homePage">
-      {loading && <FullSpin />}
-
-      <Modal
-        title="选择项目目录"
-        open={modalOpen}
-        onCancel={() => setModalOpen(false)}
-        onOk={handleLink}
-        okText="添加"
-        cancelText="取消"
-        confirmLoading={linking}
-        okButtonProps={{ disabled: !selectedCwd }}
-        width={520}
-      >
-        <div style={{ padding: '8px 0' }}>
-          <DirPicker selected={selectedCwd} onSelect={setSelectedCwd} />
-        </div>
-      </Modal>
-
-      {!loading && (
+      {loading ? (
+        <FullSpin />
+      ) : (
         <>
           <div className="homePage-content">
-            <div className="homePage-header">
-              <div className="homePage-header-title">Claude Web</div>
-              <div
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-              >
+            <div className="homePage-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <div className="homePage-header-title">Claude Web</div>
                 <div className="homePage-header-subtitle">
-                  当前有 {projects?.length} 个 Claude 项目
+                  Claude Code Agent <code>v0.1.1</code>
                 </div>
-                <Button
-                  color="primary"
-                  variant="filled"
-                  icon={<PlusOutlined />}
-                  onClick={openModal}
-                >
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <Tooltip title={theme === 'dark' ? '切换亮色' : '切换暗黑'}>
+                  <Button
+                    size="small"
+                    icon={theme === 'dark' ? <SunOutlined /> : <MoonOutlined />}
+                    onClick={toggle}
+                  />
+                </Tooltip>
+                <Button color="primary" variant="filled" icon={<PlusOutlined />} onClick={() => setShowModal(true)}>
                   添加项目
                 </Button>
               </div>
-              {projects.length > 0 && (
-                <Input.Search
-                  placeholder="筛选项目..."
-                  allowClear
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  style={{ margin: '10px 0 4px', width: isMobile ? '100%' : 300 }}
-                />
-              )}
-              <div className="homePage-header-divider" />
             </div>
 
+            {projects.length > 0 && (
+              <Input.Search
+                placeholder="筛选项目..."
+                allowClear
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{ margin: '10px 40px 4px', width: isMobile ? 'calc(100% - 80px)' : 300 }}
+              />
+            )}
+
+            <div className="homePage-header-divider" />
+
             <div className="homePage-grid">
-              {loading ? (
-                <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 60 }}>
-                  <Spin size="large" />
-                </div>
-              ) : projects.length === 0 ? (
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    paddingTop: 60,
-                    gap: 10,
-                  }}
-                >
+              {projects.length === 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 60, gap: 10 }}>
                   <div style={{ fontSize: 40 }}>📁</div>
-                  <div style={{ fontSize: 15, fontWeight: 600, color: '#555' }}>暂无项目</div>
-                  <div style={{ fontSize: 12, color: '#aaa', marginBottom: 16 }}>
+                  <div style={{ fontSize: 15, fontWeight: 600, color: css('--c-text1') }}>暂无项目</div>
+                  <div style={{ fontSize: 12, color: css('--c-text2'), marginBottom: 16 }}>
                     点击下方按钮，选择项目目录即可开始
                   </div>
-
-                  <Button
-                    color="primary"
-                    variant="filled"
-                    icon={<PlusOutlined />}
-                    onClick={openModal}
-                  >
+                  <Button color="primary" variant="filled" icon={<PlusOutlined />} onClick={() => setShowModal(true)}>
                     添加项目
                   </Button>
                 </div>
               ) : (
                 (() => {
                   const filtered = search.trim()
-                    ? projects.filter((p) =>
-                        p.cwd.toLowerCase().includes(search.trim().toLowerCase())
-                      )
+                    ? projects.filter((p) => p.cwd.toLowerCase().includes(search.trim().toLowerCase()))
                     : projects
                   return filtered.length === 0 ? (
-                    <div
-                      style={{ textAlign: 'center', color: '#aaa', paddingTop: 40, fontSize: 13 }}
-                    >
+                    <div style={{ textAlign: 'center', color: css('--c-text2'), paddingTop: 40, fontSize: 13 }}>
                       没有匹配的项目
                     </div>
                   ) : (
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-                        gap: 12,
-                      }}
-                    >
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
                       {filtered.map((p) => (
-                        <ProjectCard
-                          key={p.id}
-                          project={p}
-                          onClick={() => navigate(`/project/${p.id}`)}
-                        />
+                        <ProjectCard key={p.id} project={p} onClick={() => navigate(`/project/${p.id}`)} />
                       ))}
                     </div>
                   )
@@ -393,7 +250,6 @@ export default function HomePage() {
           {!isMobile && (
             <>
               <div className="homePage-divider" />
-
               <div className="homePage-terminal">
                 <TerminalPanel
                   welcomeMessage={[
@@ -408,6 +264,27 @@ export default function HomePage() {
           )}
         </>
       )}
+
+      <Modal
+        title="选择项目目录"
+        open={showModal}
+        onCancel={() => setShowModal(false)}
+        footer={
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+            <Button onClick={() => setShowModal(false)}>取消</Button>
+          </div>
+        }
+      >
+        <DirPicker
+          selected=""
+          onSelect={async (path) => {
+            await api.linkProject(path)
+            setShowModal(false)
+            loadProjects()
+            navigate(`/project/${path.replace(/[/\\]+/g, '-').replace(/-$/, '') || '-'}`)
+          }}
+        />
+      </Modal>
     </div>
   )
 }
