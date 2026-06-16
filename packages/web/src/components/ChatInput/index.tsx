@@ -425,6 +425,8 @@ const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(props, r
                 fontSize: 14,
                 lineHeight: '1.5',
                 wordBreak: 'break-all',
+                color: 'var(--c-text0)',
+                background: 'var(--c-input-bg)',
               },
             },
             suggestions: {
