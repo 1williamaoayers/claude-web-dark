@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState, createRef } from 'react'
 import {
   Typography,
   Spin,
@@ -24,7 +24,8 @@ interface DisplayMessage {
   error?: string
   cost?: number
 }
-import ChatInput from '@/components/ChatInput/index.tsx'
+import ChatInput, { type ChatInputHandle } from '@/components/ChatInput/index.tsx'
+import type { MutableRefObject } from 'react'
 import { MessageBubble } from '@/components/MessageBubble/index.tsx'
 
 function AskUserCard({
@@ -290,6 +291,7 @@ export default function ChatPanel({
   bypassPermissions,
   onBypassPermissionsChange,
 }: ChatPanelProps) {
+  const inputRef = useRef<ChatInputHandle>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -393,6 +395,7 @@ export default function ChatPanel({
         }}
       >
         <ChatInput
+          ref={inputRef}
           value={input}
           onChange={onInputChange}
           onPasteImage={onPasteImage}
@@ -424,7 +427,7 @@ export default function ChatPanel({
                 color="primary"
                 variant="filled"
                 icon={<ArrowUpOutlined />}
-                onClick={() => onSend([])}
+                onClick={() => inputRef.current?.send()}
                 disabled={!activeId || !input.trim()}
               />
             )}

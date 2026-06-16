@@ -1,10 +1,14 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useRef, useState, forwardRef, useImperativeHandle } from 'react'
 import { theme, App, Button, Tooltip } from 'antd'
 import { PlusOutlined, CloseOutlined, FileOutlined } from '@ant-design/icons'
 import { MentionsInput, Mention, type SuggestionDataItem } from 'react-mentions'
 import { api } from '@/http/index'
 
 // 附件统一用这个结构，图片和文本文件都走这里
+export interface ChatInputHandle {
+  send: () => void
+}
+
 export interface Attachment {
   name: string
   // 图片：base64 data
@@ -106,16 +110,23 @@ function formatSize(bytes?: number): string {
   return `${(bytes / 1024 / 1024).toFixed(1)}MB`
 }
 
-export default function ChatInput({
+// 暴露 send 方法给父组件调用
+const ChatInput = forwardRef(function ChatInput({
   value,
   onChange,
   onPasteImage,
   onSend,
   disabled,
   activeProjectID,
-}: Props) {
+}, ref): Props) {
   const { token } = theme.useToken()
   const { message } = App.useApp()
+
+  // 暴露 send 方法给父组件，确保附件一起发送
+  useImperativeHandle(ref, () => ({
+    send: () => handleSend(),
+  }))
+
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [attachments, setAttachments] = useState<Attachment[]>([])
 
@@ -481,4 +492,6 @@ export default function ChatInput({
       </div>
     </div>
   )
-}
+})
+
+export default ChatInput
