@@ -6,15 +6,11 @@ import { NEW_SESSION_ID } from '../useProjectPage'
 const { Text } = Typography
 
 const C = {
-  bg0: "var(--c-bg0)",
-  bg1: "var(--c-bg1)",
-  bg3: "var(--c-bg3)",
-  text0: "var(--c-text0)",
-  text1: "var(--c-text1)",
-  bg1: '#ffffff',
-  bg3: '#e8e8ec',
-  text0: '#1a1a1a',
-  text1: '#888888',
+  bg0: 'var(--c-bg0)',
+  bg1: 'var(--c-bg1)',
+  bg3: 'var(--c-bg3)',
+  text0: 'var(--c-text0)',
+  text1: 'var(--c-text1)',
 }
 
 interface Props {

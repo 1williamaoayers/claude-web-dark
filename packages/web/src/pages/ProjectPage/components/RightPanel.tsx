@@ -4,13 +4,10 @@ import FileViewer from '@/components/FileViewer/index.tsx'
 import DiffReview, { type FileDiff } from '@/components/DiffReview/index.tsx'
 
 const C = {
-  bg0: "var(--c-bg0)",
-  bg1: "var(--c-bg1)",
-  bg3: "var(--c-bg3)",
-  text2: "var(--c-text2)",
-  bg1: '#ffffff',
-  bg3: '#e8e8ec',
-  text2: '#bbb',
+  bg0: 'var(--c-bg0)',
+  bg1: 'var(--c-bg1)',
+  bg3: 'var(--c-bg3)',
+  text2: 'var(--c-text2)',
 }
 
 interface Props {
