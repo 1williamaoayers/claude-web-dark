@@ -111,14 +111,15 @@ function formatSize(bytes?: number): string {
 }
 
 // 暴露 send 方法给父组件调用
-const ChatInput = forwardRef(function ChatInput({
-  value,
-  onChange,
-  onPasteImage,
-  onSend,
-  disabled,
-  activeProjectID,
-}, ref): Props) {
+const ChatInput = forwardRef<ChatInputHandle, Props>(function ChatInput(props, ref) {
+  const {
+    value,
+    onChange,
+    onPasteImage,
+    onSend,
+    disabled,
+    activeProjectID,
+  } = props
   const { token } = theme.useToken()
   const { message } = App.useApp()
 
