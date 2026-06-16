@@ -333,7 +333,7 @@ export default function ChatInput({
               highlighter: { padding: '8px 12px', border: '1px solid transparent' },
               input: {
                 padding: '8px 12px',
-                border: '1px solid #d9d9d9',
+                border: '1px solid var(--c-border)',
                 borderRadius: 8,
                 outline: 'none',
                 resize: 'none',
@@ -353,8 +353,8 @@ export default function ChatInput({
               width: '100%',
               marginBottom: 8,
               list: {
-                background: '#fff',
-                border: '1px solid #e8e8e8',
+                background: 'var(--c-bg1)',
+                border: '1px solid var(--c-border)',
                 borderRadius: 8,
                 boxShadow: '0 -4px 12px rgba(0,0,0,0.1)',
                 fontSize: 13,
@@ -365,7 +365,7 @@ export default function ChatInput({
               item: {
                 padding: '6px 12px',
                 cursor: 'pointer',
-                '&focused': { background: '#e6f4ff' },
+                '&focused': { background: 'var(--c-bg-selected)' },
               },
             },
           }}

@@ -33,8 +33,8 @@ function DiffView({ oldStr, newStr }: { oldStr: string; newStr: string }) {
           <div
             key={`-${i}`}
             style={{
-              background: '#fff2f0',
-              color: '#cf1322',
+              background: "rgba(255, 0, 0, 0.08)",
+              color: "var(--c-text0)",
               padding: '0 6px',
               whiteSpace: 'pre-wrap',
               wordBreak: 'break-all',
@@ -48,8 +48,8 @@ function DiffView({ oldStr, newStr }: { oldStr: string; newStr: string }) {
           <div
             key={`+${i}`}
             style={{
-              background: '#f6ffed',
-              color: '#389e0d',
+              background: "rgba(0, 200, 0, 0.08)",
+              color: "var(--c-text0)",
               padding: '0 6px',
               whiteSpace: 'pre-wrap',
               wordBreak: 'break-all',
@@ -439,7 +439,7 @@ function SdkMessageView({ m }: { m: SessionMessage }) {
 function ThinkingIndicator() {
   return (
     <span
-      style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: '#999', fontSize: 12 }}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: "var(--c-text1)", fontSize: 12 }}
     >
       <LoadingOutlined spin style={{ fontSize: 11 }} />
       Thinking…
@@ -491,7 +491,7 @@ export function MessageBubble({ msg, pending }: { msg: DisplayMessage; pending?:
     width: '100%',
     background: isUser ? token.colorFillAlter : '',
     borderRadius: 10,
-    color: '#1a1a1a',
+    color: "var(--c-text0)",
     padding: isUser ? '8px 2px' : '4px 13px',
     margin: isUser ? '28px 0 2px 0' : '0',
     lineHeight: 1.6,
@@ -508,7 +508,7 @@ export function MessageBubble({ msg, pending }: { msg: DisplayMessage; pending?:
     >
       <Space size={5} style={{ marginBottom: 5 }}>
         {msg.cost != null && msg.cost > 0 && (
-          <Text style={{ fontSize: 10, color: '#bbb' }}>${msg.cost.toFixed(5)}</Text>
+          <Text style={{ fontSize: 10, color: "var(--c-text2)" }}>${msg.cost.toFixed(5)}</Text>
         )}
       </Space>
       <div style={bubbleStyle}>

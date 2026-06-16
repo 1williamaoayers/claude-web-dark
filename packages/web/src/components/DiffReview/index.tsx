@@ -42,7 +42,7 @@ function DiffLines({ diff }: { diff: FileDiff }) {
               width: 20,
               textAlign: 'center',
               flexShrink: 0,
-              color: '#bbb',
+              color: "var(--c-text2)",
               userSelect: 'none',
             }}
           >
@@ -76,7 +76,7 @@ function CollapseLabel({ diff }: { diff: FileDiff }) {
         style={{
           fontSize: 10,
           fontWeight: 700,
-          color: '#fff',
+          color: "#fff",
           background: statusColor,
           borderRadius: 2,
           padding: '1px 4px',
@@ -88,7 +88,7 @@ function CollapseLabel({ diff }: { diff: FileDiff }) {
       <span
         style={{
           fontSize: 12,
-          color: '#1a1a1a',
+          color: "var(--c-text0)",
           fontFamily: 'monospace',
           flex: 1,
           overflow: 'hidden',
@@ -100,11 +100,11 @@ function CollapseLabel({ diff }: { diff: FileDiff }) {
       >
         {fileName}
         {diff.file !== fileName && (
-          <span style={{ color: '#bbb', marginLeft: 6, fontSize: 11 }}>{diff.file}</span>
+          <span style={{ color: "var(--c-text2)", marginLeft: 6, fontSize: 11 }}>{diff.file}</span>
         )}
       </span>
-      <span style={{ fontSize: 11, color: '#389e0d', flexShrink: 0 }}>+{diff.additions}</span>
-      <span style={{ fontSize: 11, color: '#cf1322', flexShrink: 0, marginLeft: 4 }}>
+      <span style={{ fontSize: 11, color: "var(--c-text1)", flexShrink: 0 }}>+{diff.additions}</span>
+      <span style={{ fontSize: 11, color: "var(--c-text1)", flexShrink: 0, marginLeft: 4 }}>
         -{diff.deletions}
       </span>
     </div>
@@ -114,7 +114,7 @@ function CollapseLabel({ diff }: { diff: FileDiff }) {
 export default function DiffReview({ diffs }: { diffs: FileDiff[] }) {
   if (diffs.length === 0) {
     return (
-      <div style={{ color: '#bbb', fontSize: 12, textAlign: 'center', marginTop: 60 }}>
+      <div style={{ color: "var(--c-text2)", fontSize: 12, textAlign: 'center', marginTop: 60 }}>
         暂无文件变更
       </div>
     )
@@ -131,7 +131,7 @@ export default function DiffReview({ diffs }: { diffs: FileDiff[] }) {
       <Collapse
         items={items}
         size="small"
-        style={{ borderRadius: 0, border: 'none', borderBottom: '1px solid #e8e8ec' }}
+        style={{ borderRadius: 0, border: 'none', borderBottom: '1px solid var(--c-border)' }}
         expandIconPosition="end"
       />
     </div>

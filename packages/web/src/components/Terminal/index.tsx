@@ -26,7 +26,7 @@ export default function TerminalPanel({ cwd, onClose, welcomeMessage }: Props) {
       fontSize: 13,
       fontFamily: '"Cascadia Code", "Fira Code", "JetBrains Mono", Menlo, monospace',
       theme: {
-        background: '#ffffff',
+        background: "var(--c-bg1)",
         foreground: '#383a42',
         cursor: '#526fff',
         cursorAccent: '#ffffff',
@@ -96,7 +96,7 @@ export default function TerminalPanel({ cwd, onClose, welcomeMessage }: Props) {
 
   return (
     <div
-      style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#ffffff' }}
+      style={{ height: '100%', display: 'flex', flexDirection: 'column', background: "var(--c-bg1)" }}
     >
       <div
         style={{
@@ -105,14 +105,14 @@ export default function TerminalPanel({ cwd, onClose, welcomeMessage }: Props) {
           justifyContent: 'space-between',
           padding: '0 12px',
           height: 28,
-          background: '#f7f7f8',
-          borderBottom: '1px solid #e8e8ec',
+          background: "var(--c-bg0)",
+          borderBottom: "1px solid var(--c-border)",
           flexShrink: 0,
         }}
       >
         <span
           style={{
-            color: '#999',
+            color: "var(--c-text1)",
             fontSize: 11,
             textTransform: 'uppercase',
             letterSpacing: 0.6,
@@ -126,7 +126,7 @@ export default function TerminalPanel({ cwd, onClose, welcomeMessage }: Props) {
             <span
               onClick={onClose}
               style={{
-                color: '#bbb',
+                color: "var(--c-text2)",
                 fontSize: 13,
                 cursor: 'pointer',
                 lineHeight: 1,

@@ -206,11 +206,11 @@ function AskUserCard({
 const { Text } = Typography
 
 const C = {
-  bg0: '#f7f7f8',
-  bg1: '#ffffff',
-  bg3: '#e8e8ec',
-  text0: '#1a1a1a',
-  text2: '#bbb',
+  bg0: "var(--c-bg0)",
+  bg1: "var(--c-bg1)",
+  bg3: "var(--c-bg3)",
+  text0: "var(--c-text0)",
+  text2: 'var(--c-text2)',
 }
 
 function ChatContent({
@@ -367,7 +367,7 @@ export default function ChatPanel({
             left: 22,
             bottom: 14,
             border: `1px solid ${C.bg3}`,
-            background: 'white',
+            background: 'var(--c-bg1)',,
             transition: '1s',
             opacity: loading ? 1 : 0,
             borderRadius: 12,
