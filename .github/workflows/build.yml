@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -18,13 +20,13 @@ jobs:
       - name: Build web
         working-directory: packages/web
         run: |
-          npm ci
+          npm install
           npm run build
 
       - name: Build server
         working-directory: packages/server
         run: |
-          npm ci
+          npm install
           npm run build
 
       - name: Create release archive
@@ -35,11 +37,6 @@ jobs:
           cp packages/server/package.json dist/claude-web/
           cd dist
           tar czf claude-web-dark.tar.gz claude-web/
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: claude-web-dark
-          path: dist/claude-web-dark.tar.gz
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
