@@ -235,3 +235,30 @@ claude-web start
 ## License
 
 MIT
+
+---
+
+## 🚀 一键部署
+
+### 前置条件
+- Node.js 20+
+- Claude Code CLI 已安装并登录（`claude` 命令可用）
+
+### 部署步骤
+
+```bash
+# 1. 下载最新 release
+curl -LO https://github.com/1williamaoayers/claude-web-dark/releases/latest/download/claude-web-dark.tar.gz
+
+# 2. 解压
+tar xzf claude-web-dark.tar.gz
+cd claude-web
+
+# 3. 启动（默认 0.0.0.0:8004）
+bash start.sh
+
+# 或指定端口
+PORT=43921 bash start.sh
+```
+
+打开浏览器访问 `http://<你的IP>:8004` 即可。
