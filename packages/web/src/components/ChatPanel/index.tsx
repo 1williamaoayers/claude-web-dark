@@ -367,7 +367,7 @@ export default function ChatPanel({
             left: 22,
             bottom: 14,
             border: `1px solid ${C.bg3}`,
-            background: 'var(--c-bg1)',,
+            background: 'var(--c-bg1)',
             transition: '1s',
             opacity: loading ? 1 : 0,
             borderRadius: 12,
