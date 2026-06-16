@@ -22,7 +22,7 @@ export async function startServer(opts: ServerOptions = {}): Promise<void> {
   const port = opts.port ?? 8003
   const hostname = opts.hostname ?? '127.0.0.1'
 
-  const app = Fastify({ logger: false, forceCloseConnections: true })
+  const app = Fastify({ logger: false, forceCloseConnections: true, bodyLimit: 10 * 1024 * 1024 })
   app.addContentTypeParser('*', { parseAs: 'string' }, (req, body, done) => {
     if (req.headers.upgrade?.toLowerCase() === 'websocket') return done(null, null)
     try {
