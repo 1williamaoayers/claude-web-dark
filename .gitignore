@@ -27,4 +27,9 @@ Thumbs.db
 test-pty.html
 test-pty.js
 
+packages/server/public/*.png
+*.gif
+*.jpg
+*.jpeg
 packages/server/public/
+docs/
