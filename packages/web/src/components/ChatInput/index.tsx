@@ -136,6 +136,64 @@ export default function ChatInput({
     [activeProjectID]
   )
 
+  /** 智能压缩图片：通过 canvas 逐步降低质量/尺寸直到 < maxBytes */
+  function compressImage(file: File, maxBytes: number): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      const img = new Image()
+      img.onload = () => {
+        let w = img.naturalWidth
+        let h = img.naturalHeight
+        // 用 canvas 逐步压缩
+        const canvas = document.createElement('canvas')
+        let ctx = canvas.getContext('2d')!
+        let quality = 0.85
+        const tryCompress = () => {
+          canvas.width = w
+          canvas.height = h
+          ctx.clearRect(0, 0, w, h)
+          ctx.drawImage(img, 0, 0, w, h)
+          canvas.toBlob(
+            (blob) => {
+              if (!blob) { reject(new Error('压缩失败')); return }
+              if (blob.size <= maxBytes || (w < 200 && h < 200)) {
+                resolve(blob)
+              } else if (quality > 0.3) {
+                // 先降质量
+                quality -= 0.15
+                canvas.toBlob(
+                  (b2) => {
+                    if (!b2) { reject(new Error('压缩失败')); return }
+                    if (b2.size <= maxBytes) resolve(b2)
+                    else {
+                      // 降质量不够 → 缩小尺寸
+                      quality = 0.85
+                      w = Math.round(w * 0.8)
+                      h = Math.round(h * 0.8)
+                      tryCompress()
+                    }
+                  },
+                  file.type,
+                  quality
+                )
+              } else {
+                // 质量已最低，缩小尺寸
+                quality = 0.85
+                w = Math.round(w * 0.8)
+                h = Math.round(h * 0.8)
+                tryCompress()
+              }
+            },
+            file.type,
+            quality
+          )
+        }
+        tryCompress()
+      }
+      img.onerror = () => reject(new Error('图片加载失败'))
+      img.src = URL.createObjectURL(file)
+    })
+  }
+
   function addFile(file: File) {
     const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
     const isImage = file.type.startsWith('image/')
@@ -149,22 +207,33 @@ export default function ChatInput({
     const limit = isImage ? MAX_SIZE_IMAGE : MAX_SIZE_TEXT
     const limitLabel = isImage ? '2MB' : '200KB'
 
-    if (file.size > limit) {
-      message.warning(`文件 "${file.name}" 超过 ${limitLabel} 限制，请压缩后再上传`)
-      return
-    }
-
     if (isImage) {
-      const reader = new FileReader()
-      reader.onload = () => {
-        const base64 = (reader.result as string).split(',')[1]
-        setAttachments((prev) => [
-          ...prev,
-          { name: file.name, content: base64, mediaType: file.type },
-        ])
+      if (file.size > limit) {
+        message.info(`"${file.name}" 超过 ${limitLabel}，正在自动压缩…`)
       }
-      reader.readAsDataURL(file)
+      const processFile = (blob: Blob) => {
+        const reader = new FileReader()
+        reader.onload = () => {
+          const base64 = (reader.result as string).split(',')[1]
+          setAttachments((prev) => [
+            ...prev,
+            { name: file.name, content: base64, mediaType: blob.type },
+          ])
+        }
+        reader.readAsDataURL(blob)
+      }
+      if (file.size > limit) {
+        compressImage(file, limit).then(processFile).catch(() => {
+          message.warning('压缩失败，请手动压缩后再上传')
+        })
+      } else {
+        processFile(file)
+      }
     } else {
+      if (file.size > limit) {
+        message.warning(`文件 "${file.name}" 超过 ${limitLabel} 限制`)
+        return
+      }
       const reader = new FileReader()
       reader.onload = () => {
         setAttachments((prev) => [
