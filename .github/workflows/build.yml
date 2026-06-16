@@ -39,6 +39,8 @@ jobs:
           cd ../..
           cp -r packages/server/node_modules dist/claude-web/server/node_modules
           cp start.sh dist/claude-web/
+          cp packages/server/package.json dist/claude-web/
+          cp packages/server/README.md dist/claude-web/ 2>/dev/null || true
           cd dist
           tar czf claude-web-dark.tar.gz claude-web/
 
